@@ -2,16 +2,16 @@
 spec:
   name: trading-bot-app
 
-  # Beide Container sind Worker (kein HTTP-Endpunkt)
   workers:
     - name: trading-bot
+      instance_size_slug: apps-s-1vcpu-0.5gb   # $5 shared tier
+      instance_count: 1
       image:
         registry_type: DOCKER_HUB
         registry: aureumvictoria
         repository: uncoded-trading-bot
         tag: "2025.09.09"
       envs:
-        # ---- DB-Mapping (Option B) ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -27,12 +27,10 @@ spec:
         - key: POSTGRES_PASSWORD
           scope: RUN_TIME
           value: "${db.PASSWORD}"
-        # Zusätzlich die komplette URL (falls dein Code sie optional nutzt)
         - key: DATABASE_URL
           scope: RUN_TIME
           value: "${db.DATABASE_URL}"
 
-        # ---- Deine Secrets / sonstige ENVs ----
         - key: API_KEY
           scope: RUN_TIME
           type: SECRET
@@ -44,13 +42,14 @@ spec:
           value: "true"
 
     - name: telegram-bot
+      instance_size_slug: apps-s-1vcpu-0.5gb   # $5 shared tier
+      instance_count: 1
       image:
         registry_type: DOCKER_HUB
         registry: aureumvictoria
         repository: uncoded-telegram-bot
         tag: "2025.09.09"
       envs:
-        # ---- DB-Mapping (Option B) ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -66,12 +65,10 @@ spec:
         - key: POSTGRES_PASSWORD
           scope: RUN_TIME
           value: "${db.PASSWORD}"
-        # Zusätzlich die komplette URL
         - key: DATABASE_URL
           scope: RUN_TIME
           value: "${db.DATABASE_URL}"
 
-        # ---- Deine Secrets / sonstige ENVs ----
         - key: TELEGRAM_TOKEN
           scope: RUN_TIME
           type: SECRET
@@ -79,9 +76,8 @@ spec:
           scope: RUN_TIME
           value: "true"
 
-  # Verwaltete Postgres-DB (Dev-Plan für 1-Klick Deploy)
   databases:
     - name: db
       engine: PG
       version: "16"
-      production: false
+      production: false   # 1-Klick unterstützt Dev-DB
