@@ -2,17 +2,37 @@
 spec:
   name: trading-bot-app
 
+  # Beide Container sind Worker (kein HTTP-Endpunkt)
   workers:
     - name: trading-bot
       image:
         registry_type: DOCKER_HUB
-        registry: aureumvictoria         # Docker Hub Namespace
-        repository: uncoded-trading-bot  # Repo-Name
+        registry: aureumvictoria
+        repository: uncoded-trading-bot
         tag: "2025.09.09"
       envs:
-        - key: DATABASE_URL              # komplette Connection-URL vom Dev-DB-Resource
+        # ---- DB-Mapping (Option B) ----
+        - key: POSTGRES_HOST
           scope: RUN_TIME
-          value: ${db.DATABASE_URL}
+          value: "${db.HOSTNAME}"
+        - key: POSTGRES_PORT
+          scope: RUN_TIME
+          value: "${db.PORT}"
+        - key: POSTGRES_DB
+          scope: RUN_TIME
+          value: "${db.DATABASE}"
+        - key: POSTGRES_USER
+          scope: RUN_TIME
+          value: "${db.USERNAME}"
+        - key: POSTGRES_PASSWORD
+          scope: RUN_TIME
+          value: "${db.PASSWORD}"
+        # Zusätzlich die komplette URL (falls dein Code sie optional nutzt)
+        - key: DATABASE_URL
+          scope: RUN_TIME
+          value: "${db.DATABASE_URL}"
+
+        # ---- Deine Secrets / sonstige ENVs ----
         - key: API_KEY
           scope: RUN_TIME
           type: SECRET
@@ -20,6 +40,7 @@ spec:
           scope: RUN_TIME
           type: SECRET
         - key: DOCKER_ENV
+          scope: RUN_TIME
           value: "true"
 
     - name: telegram-bot
@@ -29,17 +50,38 @@ spec:
         repository: uncoded-telegram-bot
         tag: "2025.09.09"
       envs:
+        # ---- DB-Mapping (Option B) ----
+        - key: POSTGRES_HOST
+          scope: RUN_TIME
+          value: "${db.HOSTNAME}"
+        - key: POSTGRES_PORT
+          scope: RUN_TIME
+          value: "${db.PORT}"
+        - key: POSTGRES_DB
+          scope: RUN_TIME
+          value: "${db.DATABASE}"
+        - key: POSTGRES_USER
+          scope: RUN_TIME
+          value: "${db.USERNAME}"
+        - key: POSTGRES_PASSWORD
+          scope: RUN_TIME
+          value: "${db.PASSWORD}"
+        # Zusätzlich die komplette URL
         - key: DATABASE_URL
           scope: RUN_TIME
-          value: ${db.DATABASE_URL}
+          value: "${db.DATABASE_URL}"
+
+        # ---- Deine Secrets / sonstige ENVs ----
         - key: TELEGRAM_TOKEN
           scope: RUN_TIME
           type: SECRET
         - key: DOCKER_ENV
+          scope: RUN_TIME
           value: "true"
 
+  # Verwaltete Postgres-DB (Dev-Plan für 1-Klick Deploy)
   databases:
     - name: db
       engine: PG
       version: "16"
-      production: false   # 1-Klick Button kann nur Dev-DBs
+      production: false
