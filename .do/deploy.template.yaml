@@ -12,7 +12,7 @@ spec:
         repository: uncoded-trading-bot
         tag: "2025.09.09"
       envs:
-        # ---- 1) ZUERST: App-/API-ENVs ----
+        # ---- ZUERST: API/sonstige App-ENVs ----
         - key: API_KEY
           scope: RUN_TIME
           type: SECRET
@@ -20,20 +20,7 @@ spec:
           scope: RUN_TIME
           type: SECRET
 
-        # ---- 2) Dann: Proxy-ENVs (Outbound über Droplet-Proxy) ----
-        # Format: scheme://USER:PASS@IP:PORT
-        - key: HTTPS_PROXY
-          scope: RUN_TIME
-          value: "http://YOUR_PROXY_USER:YOUR_PROXY_PASS@YOUR_DROPLET_RESERVED_IP:3128"
-        - key: HTTP_PROXY
-          scope: RUN_TIME
-          value: "http://YOUR_PROXY_USER:YOUR_PROXY_PASS@YOUR_DROPLET_RESERVED_IP:3128"
-        # Ziele, die NICHT über den Proxy gehen sollen (DB intern etc.)
-        - key: NO_PROXY
-          scope: RUN_TIME
-          value: "${db.HOSTNAME},localhost,127.0.0.1,::1"
-
-        # ---- 3) Unten: DB-ENVs (Option B Mapping) ----
+        # ---- UNTEN: DB-ENVs ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -62,30 +49,18 @@ spec:
         repository: uncoded-telegram-bot
         tag: "2025.09.09"
       envs:
-        # ---- 1) ZUERST: Telegram-ENVs ----
+        # ---- ZUERST: Telegram-ENVs ----
         - key: TELEGRAM_BOT_TOKEN
           scope: RUN_TIME
           type: SECRET
-          value: "535695104:AAF43-oaqF9GVRkBW3UFnxESIbJXdVCZA58"
         - key: TELEGRAM_GROUP_ID
           scope: RUN_TIME
-          value: "-1002896686710"
+          type: SECRET
         - key: TELEGRAM_OWNER_ID
           scope: RUN_TIME
-          value: "545568537"
+          type: SECRET
 
-        # ---- 2) Dann: Proxy-ENVs (Outbound über Droplet-Proxy) ----
-        - key: HTTPS_PROXY
-          scope: RUN_TIME
-          value: "http://YOUR_PROXY_USER:YOUR_PROXY_PASS@YOUR_DROPLET_RESERVED_IP:3128"
-        - key: HTTP_PROXY
-          scope: RUN_TIME
-          value: "http://YOUR_PROXY_USER:YOUR_PROXY_PASS@YOUR_DROPLET_RESERVED_IP:3128"
-        - key: NO_PROXY
-          scope: RUN_TIME
-          value: "${db.HOSTNAME},localhost,127.0.0.1,::1"
-
-        # ---- 3) Unten: DB-ENVs (Option B Mapping) ----
+        # ---- UNTEN: DB-ENVs ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -109,4 +84,4 @@ spec:
     - name: db
       engine: PG
       version: "16"
-      production: false   # 1-Klick kompatibel
+      production: false   # für 1-Klick Deploy
