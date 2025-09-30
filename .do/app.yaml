@@ -5,7 +5,7 @@ services:
     image:
       registry_type: DOCKER_HUB
       registry: aureumvictoria
-      repository: uncoded-trading-bot  
+      repository: uncoded-trading-bot
       tag: 2025.09.09
     envs:
       - key: POSTGRES_HOST
@@ -31,7 +31,7 @@ services:
     image:
       registry_type: DOCKER_HUB
       registry: aureumvictoria
-      repository: uncoded-telegram-bot  
+      repository: uncoded-telegram-bot
       tag: 2025.09.09
     envs:
       - key: POSTGRES_HOST
