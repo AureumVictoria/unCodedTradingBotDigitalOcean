@@ -1,0 +1,57 @@
+name: trading-bot-app
+
+services:
+  - name: trading-bot
+    image:
+      registry_type: DOCKER_HUB
+      registry: aureumvictoria
+      repository: trading-bot
+      tag: 2025.09.09
+    envs:
+      - key: POSTGRES_HOST
+        value: ${db.HOSTNAME}
+      - key: POSTGRES_PORT
+        value: ${db.PORT}
+      - key: POSTGRES_DB
+        value: ${db.DATABASE}
+      - key: POSTGRES_USER
+        value: ${db.USERNAME}
+      - key: POSTGRES_PASSWORD
+        value: ${db.PASSWORD}
+      - key: API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: API_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: DOCKER_ENV
+        value: "true"
+
+  - name: telegram-bot
+    image:
+      registry_type: DOCKER_HUB
+      registry: aureumvictoria
+      repository: telegram-bot
+      tag: 2025.09.09
+    envs:
+      - key: POSTGRES_HOST
+        value: ${db.HOSTNAME}
+      - key: POSTGRES_PORT
+        value: ${db.PORT}
+      - key: POSTGRES_DB
+        value: ${db.DATABASE}
+      - key: POSTGRES_USER
+        value: ${db.USERNAME}
+      - key: POSTGRES_PASSWORD
+        value: ${db.PASSWORD}
+      - key: TELEGRAM_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+      - key: DOCKER_ENV
+        value: "true"
+
+databases:
+  - name: db
+    engine: PG
+    version: "16"
+    production: true
