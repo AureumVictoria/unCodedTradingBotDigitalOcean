@@ -1,30 +1,45 @@
-services:
-  database:
-    image: ghcr.io/railwayapp-templates/postgres-ssl:16
-    restart: unless-stopped
-    volumes:
-      - database-data:/var/lib/postgresql/data
-    env_file:
-      - .env.fixed
-      - .env.user
+# .do/deploy.template.yaml
+spec:
+  name: trading-bot-app
 
-  trading-bot:
-    image: aureumvictoria/uncoded-trading-bot:latest
-    restart: unless-stopped
-    depends_on:
-      - database
-    env_file:
-      - .env.fixed
-      - .env.user
+  workers:
+    - name: trading-bot
+      image:
+        registry_type: DOCKER_HUB
+        registry: aureumvictoria         # Docker Hub Namespace
+        repository: uncoded-trading-bot  # Repo-Name
+        tag: "2025.09.09"
+      envs:
+        - key: DATABASE_URL              # komplette Connection-URL vom Dev-DB-Resource
+          scope: RUN_TIME
+          value: ${db.DATABASE_URL}
+        - key: API_KEY
+          scope: RUN_TIME
+          type: SECRET
+        - key: API_SECRET
+          scope: RUN_TIME
+          type: SECRET
+        - key: DOCKER_ENV
+          value: "true"
 
-  telegram-bot:
-    image: aureumvictoria/uncoded-telegram-bot:latest
-    restart: unless-stopped
-    depends_on:
-      - trading-bot
-    env_file:
-      - .env.fixed
-      - .env.user
+    - name: telegram-bot
+      image:
+        registry_type: DOCKER_HUB
+        registry: aureumvictoria
+        repository: uncoded-telegram-bot
+        tag: "2025.09.09"
+      envs:
+        - key: DATABASE_URL
+          scope: RUN_TIME
+          value: ${db.DATABASE_URL}
+        - key: TELEGRAM_TOKEN
+          scope: RUN_TIME
+          type: SECRET
+        - key: DOCKER_ENV
+          value: "true"
 
-volumes:
-  database-data:
+  databases:
+    - name: db
+      engine: PG
+      version: "16"
+      production: false   # 1-Klick Button kann nur Dev-DBs
