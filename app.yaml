@@ -1,0 +1,35 @@
+name: trading-bot-app
+services:
+  - name: trading-bot
+    image:
+      registry_type: DOCKER_HUB
+      registry: deinusername
+      repository: trading-bot
+      tag: latest
+    envs:
+      - key: POSTGRES_HOST
+        value: ${db.DATABASE_URL}
+      - key: API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: API_SECRET
+        scope: RUN_TIME
+        type: SECRET
+
+  - name: telegram-bot
+    image:
+      registry_type: DOCKER_HUB
+      registry: deinusername
+      repository: telegram-bot
+      tag: latest
+    envs:
+      - key: POSTGRES_HOST
+        value: ${db.DATABASE_URL}
+      - key: TELEGRAM_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+
+databases:
+  - name: db
+    engine: PG
+    production: true
