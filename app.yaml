@@ -3,33 +3,71 @@ services:
   - name: trading-bot
     image:
       registry_type: DOCKER_HUB
-      registry: deinusername
+      registry: aureumvictoria
       repository: trading-bot
       tag: 2025.09.09
     envs:
+      # Database Connection
       - key: POSTGRES_HOST
-        value: ${db.DATABASE_URL}
+        value: ${db.HOSTNAME}  # ✅ Besser als DATABASE_URL
+      - key: POSTGRES_PORT
+        value: ${db.PORT}
+      - key: POSTGRES_DB
+        value: ${db.DATABASE}
+      - key: POSTGRES_USER
+        value: ${db.USERNAME}
+      - key: POSTGRES_PASSWORD
+        value: ${db.PASSWORD}
+      
+      # Deine API Keys
       - key: API_KEY
         scope: RUN_TIME
         type: SECRET
       - key: API_SECRET
         scope: RUN_TIME
         type: SECRET
+      
+      # Optional: Weitere Keys aus deiner keys.env
+      - key: DOCKER_ENV
+        value: "true"
+    
+    health_check:
+      http_path: /health  # Falls dein Bot einen Health-Endpoint hat
+      initial_delay_seconds: 30
 
   - name: telegram-bot
     image:
       registry_type: DOCKER_HUB
-      registry: deinusername
+      registry: aureumvictoria
       repository: telegram-bot
       tag: 2025.09.09
     envs:
+      # Database Connection
       - key: POSTGRES_HOST
-        value: ${db.DATABASE_URL}
+        value: ${db.HOSTNAME}
+      - key: POSTGRES_PORT
+        value: ${db.PORT}
+      - key: POSTGRES_DB
+        value: ${db.DATABASE}
+      - key: POSTGRES_USER
+        value: ${db.USERNAME}
+      - key: POSTGRES_PASSWORD
+        value: ${db.PASSWORD}
+      
+      # Telegram Token
       - key: TELEGRAM_TOKEN
         scope: RUN_TIME
         type: SECRET
+      
+      - key: DOCKER_ENV
+        value: "true"
+    
+    health_check:
+      initial_delay_seconds: 30
 
 databases:
   - name: db
     engine: PG
+    version: "16"  # ✅ Gleiche Version wie in docker-compose
     production: true
+    cluster_name: trading-db
