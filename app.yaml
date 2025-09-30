@@ -5,7 +5,7 @@ services:
       registry_type: DOCKER_HUB
       registry: deinusername
       repository: trading-bot
-      tag: latest
+      tag: 2025.09.09
     envs:
       - key: POSTGRES_HOST
         value: ${db.DATABASE_URL}
@@ -21,7 +21,7 @@ services:
       registry_type: DOCKER_HUB
       registry: deinusername
       repository: telegram-bot
-      tag: latest
+      tag: 2025.09.09
     envs:
       - key: POSTGRES_HOST
         value: ${db.DATABASE_URL}
