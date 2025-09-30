@@ -12,6 +12,15 @@ spec:
         repository: uncoded-trading-bot
         tag: "2025.09.09"
       envs:
+        # ---- ZUERST: API/sonstige App-ENVs ----
+        - key: API_KEY
+          scope: RUN_TIME
+          type: SECRET
+        - key: API_SECRET
+          scope: RUN_TIME
+          type: SECRET
+
+        # ---- UNTEN: DB-ENVs ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -30,16 +39,6 @@ spec:
         - key: DATABASE_URL
           scope: RUN_TIME
           value: "${db.DATABASE_URL}"
-
-        - key: API_KEY
-          scope: RUN_TIME
-          type: SECRET
-        - key: API_SECRET
-          scope: RUN_TIME
-          type: SECRET
-        - key: DOCKER_ENV
-          scope: RUN_TIME
-          value: "true"
 
     - name: telegram-bot
       instance_size_slug: apps-s-1vcpu-0.5gb   # $5 shared tier
@@ -50,6 +49,19 @@ spec:
         repository: uncoded-telegram-bot
         tag: "2025.09.09"
       envs:
+        # ---- ZUERST: Telegram-ENVs ----
+        - key: TELEGRAM_BOT_TOKEN
+          scope: RUN_TIME
+          type: SECRET
+          value: "535695104:AAF43-oaqF9GVRkBW3UFnxESIbJXdVCZA58"
+        - key: TELEGRAM_GROUP_ID
+          scope: RUN_TIME
+          value: "-1002896686710"
+        - key: TELEGRAM_OWNER_ID
+          scope: RUN_TIME
+          value: "545568537"
+
+        # ---- UNTEN: DB-ENVs ----
         - key: POSTGRES_HOST
           scope: RUN_TIME
           value: "${db.HOSTNAME}"
@@ -69,15 +81,8 @@ spec:
           scope: RUN_TIME
           value: "${db.DATABASE_URL}"
 
-        - key: TELEGRAM_TOKEN
-          scope: RUN_TIME
-          type: SECRET
-        - key: DOCKER_ENV
-          scope: RUN_TIME
-          value: "true"
-
   databases:
     - name: db
       engine: PG
       version: "16"
-      production: false   # 1-Klick unterstützt Dev-DB
+      production: false   # für 1-Klick Deploy
