@@ -56,13 +56,13 @@ spec:
         - key: TELEGRAM_BOT_TOKEN
           scope: RUN_TIME
           type: SECRET
-          value: "535695104:AAF43-oaqF9GVRkBW3UFnxESIbJXdVCZA58"
+          value: ""
         - key: TELEGRAM_GROUP_ID
           scope: RUN_TIME
-          value: "-1002896686710"
+          value: ""
         - key: TELEGRAM_OWNER_ID
           scope: RUN_TIME
-          value: "545568537"
+          value: ""
 
         # ---- DB-ENVs (mit SSL-Erzwingung) ----
         - key: POSTGRES_HOST
