@@ -1,57 +1,30 @@
-name: trading-bot-app
-
 services:
-  - name: trading-bot
-    image:
-      registry_type: DOCKER_HUB
-      registry: aureumvictoria
-      repository: uncoded-trading-bot
-      tag: 2025.09.09
-    envs:
-      - key: POSTGRES_HOST
-        value: ${db.HOSTNAME}
-      - key: POSTGRES_PORT
-        value: ${db.PORT}
-      - key: POSTGRES_DB
-        value: ${db.DATABASE}
-      - key: POSTGRES_USER
-        value: ${db.USERNAME}
-      - key: POSTGRES_PASSWORD
-        value: ${db.PASSWORD}
-      - key: API_KEY
-        scope: RUN_TIME
-        type: SECRET
-      - key: API_SECRET
-        scope: RUN_TIME
-        type: SECRET
-      - key: DOCKER_ENV
-        value: "true"
+  database:
+    image: ghcr.io/railwayapp-templates/postgres-ssl:16
+    restart: unless-stopped
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    env_file:
+      - .env.fixed
+      - .env.user
 
-  - name: telegram-bot
-    image:
-      registry_type: DOCKER_HUB
-      registry: aureumvictoria
-      repository: uncoded-telegram-bot
-      tag: 2025.09.09
-    envs:
-      - key: POSTGRES_HOST
-        value: ${db.HOSTNAME}
-      - key: POSTGRES_PORT
-        value: ${db.PORT}
-      - key: POSTGRES_DB
-        value: ${db.DATABASE}
-      - key: POSTGRES_USER
-        value: ${db.USERNAME}
-      - key: POSTGRES_PASSWORD
-        value: ${db.PASSWORD}
-      - key: TELEGRAM_TOKEN
-        scope: RUN_TIME
-        type: SECRET
-      - key: DOCKER_ENV
-        value: "true"
+  trading-bot:
+    image: aureumvictoria/uncoded-trading-bot:latest
+    restart: unless-stopped
+    depends_on:
+      - database
+    env_file:
+      - .env.fixed
+      - .env.user
 
-databases:
-  - name: db
-    engine: PG
-    version: "16"
-    production: true
+  telegram-bot:
+    image: aureumvictoria/uncoded-telegram-bot:latest
+    restart: unless-stopped
+    depends_on:
+      - trading-bot
+    env_file:
+      - .env.fixed
+      - .env.user
+
+volumes:
+  database-data:
